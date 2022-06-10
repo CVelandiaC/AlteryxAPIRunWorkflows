@@ -1,15 +1,15 @@
+
 from Alteryx_Execute_WF_Fun import *
 import json 
 
-# Código tomado de https://www.theinformationlab.co.uk/2021/02/15/trigger-an-alteryx-workflow-app-to-run-upon-loading-data-to-s3/
 
 with open('Alteryx_creds.json') as json_file:
     creds = json.load(json_file)
 
-DataFLow_ID = "618d71a16bfa0f31885bf80d"
-Req_body = '{"priority" : "3"}'
+DataFLow_ID = "XXXXXX"
+Req_body = '{"priority" : "3"}' # Change priority of flow execution.
 
-#Ejemplo llamado de apps de alteryx
+# Alteryx API Call Body Example
 """{
     "questions": [
     {
@@ -20,7 +20,9 @@ Req_body = '{"priority" : "3"}'
 }
 """
 
-Response = execute_workflow(creds["Key"], creds["Secret"], creds["ADL_Gallery"], DataFLow_ID,  Req_body)
+Response = execute_workflow(creds["Key"], creds["Secret"], creds["Gallery"], DataFLow_ID,  Req_body)
+
+# Parse respnse and print it
 Pretty_response = json.dumps(Response, sort_keys=True, indent=4, ensure_ascii=False)
 print(Pretty_response)
 
