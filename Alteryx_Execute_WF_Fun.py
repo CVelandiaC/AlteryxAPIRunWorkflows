@@ -7,12 +7,13 @@ import hmac
 import requests
 import base64
 import time
+import json
 
 
-def alteryx_oauth_auth(apikey, apisecret, url, method):
+def alteryx_oauth_auth(apikey, apisecret, url, method, vals):
 
     # Generate time and nonce fields
-    oauth_nonce = str(random.randint(0,1)*1e9) # Generate nonce random parameter according to JS Code
+    oauth_nonce = str(random.randint(0,1)*1e9) # Generate nonce random parameter according to JS Code from documentation
     oauth_timestamp = str(int(time.time())) # Generate timestamp 
 
     # Generate Auth String using HMAC-SHA1 method
@@ -39,22 +40,23 @@ def alteryx_oauth_auth(apikey, apisecret, url, method):
 
     oauth_signature = urllib.parse.quote(oauth_signature, safe='')
 
-    oauth_signature = 'oauth_signature='+oauth_signature
+    oauth_signature = 'oauth_signature=' + oauth_signature
 
     # generate the signed url and return it
-    url = url+'?'+values+'&'+oauth_signature
+    url = url + '?' + vals + values + '&' + oauth_signature
 
+    print(url)
     return url
 
 
-def execute_workflow(apikey, apisecret, baseurl, workflowid, payload):
+def execute_workflow_return_result(apikey, apisecret, baseurl, workflowid, payload):
 
     # create the url required as per this call, this includes the workflow id passed by the user
     url = baseurl + 'api/v1/workflows/' + workflowid + '/jobs/'
     method = 'POST'
 
     # use the ayx_auth function created above to create a signed url
-    url = alteryx_oauth_auth(apikey,apisecret,url,method)
+    url = alteryx_oauth_auth(apikey, apisecret, url, method, "")
 
     # make the initial api call to trigger the job to run
     headers = {'Content-type': 'application/json'}
@@ -69,16 +71,10 @@ def execute_workflow(apikey, apisecret, baseurl, workflowid, payload):
         jsonresponse = apicall.json()
         jobid = jsonresponse['id']
 
-        # create the url required to check the status of the generated job
-        url = baseurl+'api/v1/jobs/'+jobid+'/'
-        method = 'GET'
+        with open('Alteryx_Run_WF_Response.json', 'w') as outfile:
+            json.dump(jsonresponse, outfile, ensure_ascii=False)
 
-        # use the ayx_auth function created above to create a signed url
-        signedurl = alteryx_oauth_auth(apikey,apisecret,url,method)
-
-        # make the request to fetch the job status
-        apicall = requests.get(signedurl)
-        apiresponse = apicall.json()
+        _, apiresponse = get_job_status(baseurl, jobid, apikey, apisecret)        
 
         # loop to keep fetching the job status until it is set to complete
         while apiresponse['status'] != 'Completed':
@@ -86,27 +82,17 @@ def execute_workflow(apikey, apisecret, baseurl, workflowid, payload):
             # hold the call for 5 seconds so that we aren't constantly querying
             time.sleep(5)
 
-            # use the ayx_auth function created above to create a signed url
-            signedurl = alteryx_oauth_auth(apikey,apisecret,url,method)
-
-            # make the request to fetch the job status
-            apicall = requests.get(signedurl)
+            apicall, apiresponse = get_job_status(baseurl, jobid, apikey, apisecret)
 
             # check if the status code is 200 if not break the loop
             if apicall.status_code != 200:
                 break
-            apiresponse = apicall.json()
 
             # once the call has returned the status 'completed' go and fetch the full apiresponse
 
         else:
 
-            # use the ayx_auth function created above to create a signed url
-            signedurl = alteryx_oauth_auth  (apikey,apisecret,url,method)
-
-            # make the request to fetch the job status
-            apicall = requests.get(signedurl)
-            apiresponse = apicall.json()
+            _, apiresponse = get_job_status(baseurl, jobid, apikey, apisecret)
             
             return apiresponse
     else:
@@ -114,3 +100,34 @@ def execute_workflow(apikey, apisecret, baseurl, workflowid, payload):
         apiresponse = apicall.json()
 
         return apiresponse
+
+def get_job_status(baseurl, jobid, apikey, apisecret):
+    # create the url required to check the status of the generated job
+    url = baseurl + 'api/v1/jobs/' + jobid + '/'
+    method = 'GET'
+
+    # use the ayx_auth function created above to create a signed url
+    signedurl = alteryx_oauth_auth(apikey, apisecret, url, method, "")
+
+    # make the request to fetch the job status
+    apicall = requests.get(signedurl)
+    apiresponse = apicall.json()
+
+    return [apicall, apiresponse]
+
+def get_workflow_jobs(baseurl, workflowid, apikey, apisecret, sortfield, direction, offset, limit):
+     # create the url required as per this call, this includes the workflow id passed by the user
+    url = baseurl + 'api/v1/workflows/' + workflowid + '/jobs/' 
+    Extra_vals = 'sortField=' + sortfield + '&direction=' + direction + '&offset=' + offset + '&limit=' + limit + "&"
+    method = 'GET'
+
+    # use the ayx_auth function created above to create a signed url
+    url = alteryx_oauth_auth(apikey, apisecret, url, method, Extra_vals)
+
+    # make the initial api call to trigger the job to run
+    headers = {'Content-type': 'application/json'}
+
+    apicall = requests.post(url, headers=headers)
+    apiresponse = apicall.json()
+
+    return [apicall, apiresponse]
