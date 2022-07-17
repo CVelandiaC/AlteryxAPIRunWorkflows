@@ -13,12 +13,13 @@ import json
 def alteryx_oauth_auth(apikey, apisecret, url, method, vals):
 
     # Generate time and nonce fields
-    oauth_nonce = str(random.randint(0,1)*1e9) # Generate nonce random parameter according to JS Code from documentation
+    oauth_nonce = str(random.randint(0,51543575)+654987) # Generate nonce random parameter
     oauth_timestamp = str(int(time.time())) # Generate timestamp 
 
     # Generate Auth String using HMAC-SHA1 method
-    values = str('oauth_consumer_key=' + apikey +'&oauth_nonce=' + oauth_nonce + '&oauth_signature_method=HMAC-SHA1&oauth_timestamp=' + oauth_timestamp + '&oauth_version=1.0')
 
+    values = str('oauth_consumer_key=' + apikey +'&oauth_nonce=' + oauth_nonce + '&oauth_signature_method=HMAC-SHA1&oauth_timestamp=' + oauth_timestamp + '&oauth_version=1.0')
+    
     # percent encoding
     percent_values = urllib.parse.quote(values, safe='')
     percent_url = urllib.parse.quote(url, safe='')
@@ -43,7 +44,11 @@ def alteryx_oauth_auth(apikey, apisecret, url, method, vals):
     oauth_signature = 'oauth_signature=' + oauth_signature
 
     # generate the signed url and return it
-    url = url + '?' + vals + values + '&' + oauth_signature
+    #url = url + '?' + vals + values + '&' + oauth_signature
+    if vals == "":
+        url = url + '?' + vals + values + '&' + oauth_signature
+    else: 
+        url = url + values + '&' + oauth_signature
 
     print(url)
     return url
@@ -117,12 +122,12 @@ def get_job_status(baseurl, jobid, apikey, apisecret):
 
 def get_workflow_jobs(baseurl, workflowid, apikey, apisecret, sortfield, direction, offset, limit):
      # create the url required as per this call, this includes the workflow id passed by the user
-    url = baseurl + 'api/v1/workflows/' + workflowid + '/jobs/' 
-    Extra_vals = 'sortField=' + sortfield + '&direction=' + direction + '&offset=' + offset + '&limit=' + limit + "&"
+    Extra_vals = 'sortField=' + sortfield + '&direction=' + direction + '&offset=' + offset + '&limit=' + limit + '&' 
+    url = baseurl + 'api/v1/workflows/' + workflowid + '/jobs/?' + Extra_vals
     method = 'GET'
 
     # use the ayx_auth function created above to create a signed url
-    url = alteryx_oauth_auth(apikey, apisecret, url, method, Extra_vals)
+    url = alteryx_oauth_auth(apikey, apisecret, url, method, "si")
 
     # make the initial api call to trigger the job to run
     headers = {'Content-type': 'application/json'}

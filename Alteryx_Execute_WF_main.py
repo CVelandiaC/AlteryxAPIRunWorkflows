@@ -21,7 +21,7 @@ Req_body = '{"priority" : "3"}' # Change priority of flow execution.
 }
 """
 
-Response = execute_workflow_return_result(creds["Key"], creds["Secret"], creds["Gallery"], DataFLow_ID,  Req_body)
+"""Response = execute_workflow_return_result(creds["Key"], creds["Secret"], creds["Gallery"], DataFLow_ID,  Req_body)
 
 # Parse respnse and print it
 Pretty_response = json.dumps(Response, sort_keys=True, indent=4, ensure_ascii=False)
@@ -29,12 +29,11 @@ print(Pretty_response)
 
 # Save Response
 with open('Alteryx_Job_Response.json', 'w') as outfile:
-    json.dump(Response, outfile, ensure_ascii=False)
+    json.dump(Response, outfile, ensure_ascii=False)"""
 
-"""
+
 # Get all Jobs from that worflow
 _, Response1 = get_workflow_jobs(creds["Gallery"], DataFLow_ID, creds["Key"], creds["Secret"], "createdate", "desc", '0', '10')
 
 Pretty_response1 = json.dumps(Response1, sort_keys=True, indent=4, ensure_ascii=False)
 print(Pretty_response1)
-"""

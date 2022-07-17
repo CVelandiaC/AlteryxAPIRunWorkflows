@@ -1,43 +1,6 @@
 {
-    "id": "62a926f129220000b90046f9",
-    "appId": null,
-    "createDate": "2022-06-15T00:25:21Z",
-    "status": "Completed",
-    "disposition": "Success",
-    "outputs": [],
-    "messages": [
-        {
-            "status": 1,
-            "text": "1 record was output",
-            "toolId": 5
-        },
-        {
-            "status": 1,
-            "text": "1 record was output",
-            "toolId": 6
-        },
-        {
-            "status": 1,
-            "text": "1 record was output",
-            "toolId": 11
-        },
-        {
-            "status": 1,
-            "text": "ODBC Driver version: 03.80",
-            "toolId": 21
-        },
-        {
-            "status": 1,
-            "text": "Number of records read: 1 (ended by a downstream tool)",
-            "toolId": 22
-        },
-        {
-            "status": 1,
-            "text": "Number of records read: 1 (ended by a downstream tool)",
-            "toolId": 25
-        }
-    ],
-    "priority": 3,
-    "workerTag": null,
-    "runWithE2": false
+    "data": null,
+    "exceptionName": "UnauthorizedException",
+    "innerExceptionMessage": "",
+    "message": "The provided signature(oauth_signature) is invalid."
 }
