@@ -123,11 +123,12 @@ def get_job_status(baseurl, jobid, apikey, apisecret):
 def get_workflow_jobs(baseurl, workflowid, apikey, apisecret, sortfield, direction, offset, limit):
      # create the url required as per this call, this includes the workflow id passed by the user
     Extra_vals = 'sortField=' + sortfield + '&direction=' + direction + '&offset=' + offset + '&limit=' + limit + '&' 
-    url = baseurl + 'api/v1/workflows/' + workflowid + '/jobs/?' + Extra_vals
+    #url = baseurl + 'api/v1/workflows/' + workflowid + '/jobs/?' + Extra_vals
+    url = baseurl + 'api/v1/workflows/' + workflowid + '/jobs/'
     method = 'GET'
 
     # use the ayx_auth function created above to create a signed url
-    url = alteryx_oauth_auth(apikey, apisecret, url, method, "si")
+    url = alteryx_oauth_auth(apikey, apisecret, url, method, "")
 
     # make the initial api call to trigger the job to run
     headers = {'Content-type': 'application/json'}

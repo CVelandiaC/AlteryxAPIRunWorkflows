@@ -1,6 +1,1 @@
-{
-    "data": null,
-    "exceptionName": "UnauthorizedException",
-    "innerExceptionMessage": "",
-    "message": "The provided signature(oauth_signature) is invalid."
-}
+{"id": "62d470d411030000e0004177", "appId": null, "createDate": "2022-07-17T20:28:04Z", "status": "Completed", "disposition": "Error", "outputs": [], "messages": [{"status": 3, "text": "Must especify a bucket. Please connect with API input parameter.", "toolId": 694}, {"status": 3, "text": "Must especify a s3 keys. Please connect with API input parameter.", "toolId": 694}, {"status": 3, "text": "Must especify a environment. Please connect with API input parameter.", "toolId": 694}, {"status": 1, "text": "This is AMP Engine; running 16 worker threads; memory limit 24.4 GB.", "toolId": -1}], "priority": 3, "workerTag": null, "runWithE2": true}
