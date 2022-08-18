@@ -1,2 +1,3 @@
 Alteryx_Creds.json
 __pycache__/Alteryx_Execute_WF_Fun.cpython-37.pyc
+*.pyc
